@@ -16,7 +16,7 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-resource "aws_s3_bucket" "My-Github-Actions-bucket1979" {
+resource "aws_s3_bucket" "my-github-actions-bucket1979" {
   bucket =  "My-Github-Actions-bucket1979"
   acl = "public-read"
 
