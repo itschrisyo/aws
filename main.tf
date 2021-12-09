@@ -16,8 +16,8 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-resource "aws_s3_bucket" "b" {
-  bucket =  "My-Github-Actions-bucket"
+resource "aws_s3_bucket" "My-Github-Actions-bucket1979" {
+  bucket =  "My-Github-Actions-bucket1979"
   acl = "public-read"
 
   tags = {
@@ -38,8 +38,8 @@ resource "aws_instance" "app_server" {
   }
 }
 
-resource "aws_security_group" "allow_ssh_dev_access" {
-  name        = "allow_ssh_dev_access"
+resource "aws_security_group" "allow_ssh_dev_access2" {
+  name        = "allow_ssh_dev_access2"
   description = "Allow SSH access by Development Team"
   vpc_id      = "vpc-5bcd7721"
 
