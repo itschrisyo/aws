@@ -24,6 +24,7 @@ resource "aws_instance" "app_server" {
   tags = {
     Tenable     = "FA"
     Environment = "Dev"
+    Name = "Compute"
   }
 }
 
