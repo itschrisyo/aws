@@ -16,6 +16,16 @@ provider "aws" {
   region  = "us-east-1"
 }
 
+resource "aws_s3_bucket" "b" {
+  bucket =  "My-Github-Actions-bucket"
+  acl = "public-read"
+
+  tags = {
+    Name = "GitHubActions"
+    Environment = "Dev"
+  }
+  
+}
 resource "aws_instance" "app_server" {
   count         = 3 # Will create 3 EC2 instances
   ami           = "ami-04ad2567c9e3d7893"
