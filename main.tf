@@ -46,7 +46,7 @@ resource "aws_instance" "app_server" {
   }
 }
 
-resource "aws_security_group" "allow_ssh_dev_access2" {
+resource "aws_security_group" "allow_ssh_dev_access3" {
   name        = "allow_ssh_dev_access2"
   description = "Allow SSH access by Development Team"
   vpc_id      = "vpc-5bcd7721"
