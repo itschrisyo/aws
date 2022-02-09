@@ -35,7 +35,7 @@ resource "aws_s3_bucket" "my-github-actions-bucket1979" {
   
 }
 resource "aws_instance" "app_server" {
-  count         = 3 # Will create 3 EC2 instances
+  count         = 1 # Will create 3 EC2 instances
   ami           = "ami-04ad2567c9e3d7893"
   instance_type = "t2.micro"
 
@@ -46,7 +46,7 @@ resource "aws_instance" "app_server" {
   }
 }
 
-resource "aws_security_group" "allow_ssh_dev_access3" {
+resource "aws_security_group" "allow_ssh_dev_access2" {
   name        = "allow_ssh_dev_access2"
   description = "Allow SSH access by Development Team"
   vpc_id      = "vpc-5bcd7721"
@@ -76,6 +76,6 @@ resource "aws_security_group" "allow_ssh_dev_access3" {
   } ]
   
   tags = {
-    Name = "allow_ssh"
+    Name = "allow_ssh2"
   }
   }
