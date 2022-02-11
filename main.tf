@@ -20,13 +20,13 @@ resource "aws_s3_bucket" "my-github-actions-bucket1979" {
   bucket =  "my-github-actions-bucket1979"
   acl = "public-read"
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
+  #server_side_encryption_configuration {
+  #  rule {
+  #    apply_server_side_encryption_by_default {
+  #      sse_algorithm = "AES256"
+  #    }
+  #  }
+  #}
 
   tags = {
     Name = "GitHubActions"
@@ -53,6 +53,7 @@ resource "aws_security_group" "allow_ssh_dev_access2" {
 
   ingress = [ {
     cidr_blocks = [ "0.0.0.0/0" ]
+    #cidr_blocks = [ "10.0.0.0/8" ]
     description = "Allow SSH Access from Dev"
     from_port = 22
     ipv6_cidr_blocks = []
