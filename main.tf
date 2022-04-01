@@ -16,17 +16,30 @@ provider "aws" {
   region  = "us-east-1"
 }
 
+resource "aws_s3_bucket" "b" {
+  bucket = "my-tf-test-bucket"
+
+  tags = {
+    Name        = "My bucket"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_s3_bucket_acl" "example" {
+  bucket = aws_s3_bucket.b.id
+  acl    = "private"
+}
 resource "aws_s3_bucket" "my-github-actions-bucket1979" {
   bucket =  "my-github-actions-bucket1979"
   acl = "public-read"
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
+#  server_side_encryption_configuration {
+#   rule {
+#     apply_server_side_encryption_by_default {
+#       sse_algorithm = "AES256"
+#     }
+#   }
+# }
 
   tags = {
     Name = "GitHubActions"
