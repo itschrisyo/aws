@@ -41,4 +41,11 @@ jobs:
           fail-on-violations: true
           # Fail the build on all errors
           fail-on-all-errors: false
+      - name: Display statistics
+        run:
+           echo ""
+           echo "Environment Name :${{ steps.accurics.outputs.env-name }}";
+           echo "Repository:${{ steps.accurics.outputs.repo }}";
+           echo "Violation Count:${{ steps.accurics.outputs.num-violations }}";
+           echo "Resource Count:${{ steps.accurics.outputs.num-resources }}";
          
