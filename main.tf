@@ -25,10 +25,6 @@ resource "aws_s3_bucket" "b" {
   }
 }
 
-resource "aws_s3_bucket_acl" "example" {
-  bucket = aws_s3_bucket.b.id
-  acl    = "private"
-}
 resource "aws_s3_bucket" "my-github-actions-bucket1979" {
   bucket =  "my-github-actions-bucket1979"
   acl = "public-read"
@@ -65,8 +61,8 @@ resource "aws_security_group" "allow_ssh_dev_access2" {
   vpc_id      = "vpc-5bcd7721"
 
   ingress = [ {
-    #cidr_blocks = [ "0.0.0.0/0" ]
-    cidr_blocks = [ "10.0.0.0/8" ]
+    cidr_blocks = [ "0.0.0.0/0" ]
+    #cidr_blocks = [ "10.0.0.0/8" ]
     description = "Allow SSH Access from Dev"
     from_port = 22
     ipv6_cidr_blocks = []
