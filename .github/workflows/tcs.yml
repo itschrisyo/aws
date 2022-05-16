@@ -1,0 +1,25 @@
+- name: Accurics GitHub Action
+  # You may pin to the exact commit or the version.
+  # uses: accurics/accurics-action@2ef358587ac0d694210cc59d5b6fc48813a40ea4
+  uses: accurics/accurics-action@v1.3.1
+  with:
+    # 
+    debug-mode: # optional
+    # The Terraform version used to process the files in this repository (ex: 0.12.26). (default=latest)
+    terraform-version: # optional, default is latest
+    # A list of directories to scan within this repository separated by a space. (default=current directory)
+    directories: # optional, default is .
+    # Terraform plan arguments
+    plan-args: # default is 
+    # Environment ID for Accurics to scan
+    env-id: # default is 
+    # Accurics CLI Application Token ID
+    app-id: # default is 
+    # Repository Location
+    repo: # optional, default is __empty__
+    # Accurics Application URL
+    url: # optional, default is https://app.accurics.com
+    # Allows Accurics to fail the build when violations are found (default=true)
+    fail-on-violations: # optional, default is true
+    # Allows Accurics to fail the build when any errors are encountered (default=true)
+    fail-on-all-errors: # optional, default is true
