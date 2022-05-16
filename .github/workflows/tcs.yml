@@ -1,8 +1,9 @@
-- name: Accurics GitHub Action
+steps:
+  - name: Accurics GitHub Action
   # You may pin to the exact commit or the version.
   # uses: accurics/accurics-action@2ef358587ac0d694210cc59d5b6fc48813a40ea4
-  uses: accurics/accurics-action@v1.3.1
-  with:
+    uses: accurics/accurics-action@v1.3.1
+    with:
     # 
     debug-mode: # optional
     # The Terraform version used to process the files in this repository (ex: 0.12.26). (default=latest)
