@@ -1,0 +1,146 @@
+# An example ADO pipeline that includes accurics linux before the 
+terraform apply step
+# This example shows how to run on a container already containing 
+terraform and accurics
+# and it also shows, how with a few quick changes you can run on the VM 
+host in ADO
+  
+# Some notes about secrets and their use in ADO:
+# See 
+https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#secret-variables
+# Secret variables are not defaulted as environment variables and must be 
+explicitly
+# called out in each step
+  
+trigger:
+- main
+  
+variables:
+  # The Accurics version can either be pinned or else use a version number
+  # Uncomment this when not working with a container image
+  # ACCURICS_VERSION: "1.0.35"
+  # ACCURICS_VERSION: "latest"
+  ENVIRONMENT: staging
+  
+pool:
+  vmImage: ubuntu-latest
+  
+# If instead of running on the common host you want to run in a container 
+that already has the
+# pre-requisites installed (highly recommended) then you just need to 
+specify a container to
+# run the script steps on.
+  
+container: ghcr.io/propellent-io/docker-accurics:latest
+  
+steps:
+- script: |
+    which terraform
+    terraform --version
+  displayName: 'Discover Terraform'
+  
+  
+- script: |
+    terraform init
+    terraform validate
+  displayName: 'Terraform Init'
+  
+  
+- script: |
+    terraform plan 
+-var-file="${BUILD_REPOSITORY_LOCALPATH}/environments/${ENVIRONMENT}.tfvars" 
+-out=plan.out
+    terraform show -json plan.out > plan.json
+  displayName: 'Terraform Plan'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+  
+  # Uncomment this wget script portion when not running in a container 
+where we then need to
+  # download the accurics tooling instead. Make sure to comment out the 
+container stanza
+  # above also
+  
+  # In Azure Pipelines the workspace is cached from one pipeline run to 
+the next, so if a file
+  # already exists it will not be downloaded again. This is a problem when 
+different versions of
+  # the file have the same name because as we change the version number 
+the previous file doesn't
+  # get replaced and we end up with the old version running when we've 
+requested a newer version.
+# - script: |
+#     wget -O accurics \
+#         
+https://downloads.accurics.com/cli/${ACCURICS_VERSION}/accurics_linux
+#     chmod +x ./accurics
+#     mv ./accurics /usr/bin/
+#   displayName: 'Download Accurics Tooling'
+  
+  
+  # For remote tfstate locations instead of `-tfstatefile=` use the 
+`-pulltfstate`
+  # option instead.
+  
+  # SSH is often used by git to clone repositories. It can be used like 
+this for Terraform
+  # remote modules if they are housed in external git repositories. In 
+that case we'll want
+  # to know that ssh is avaialble as a cli tool.
+  
+  # git is used by the accurics tooling to scrape certain repository 
+settings
+  
+  # The Terraform version should ideally be heavily controlled and already 
+be a part of the
+  # pipeline process (i.e. have a fixed version) which matches the version 
+all developers
+  # are using. Terraform must match across everything using it.
+  
+  # NOTE: -fail will only work if there are enforcing policies in 
+Tenable.CS
+- script: |
+    which ssh
+    which git
+    cd ${BUILD_REPOSITORY_LOCALPATH}
+    accurics version
+    accurics plan \
+        -appurl="https://cloud.tenable.com/cns" \
+        -cloudscan \
+        -fail \
+        -mode=pipeline \
+        -planjson="${BUILD_REPOSITORY_LOCALPATH}/plan.json" \
+        -project="${ACCURICS_PROJECT}" \
+        -tfstate="${BUILD_REPOSITORY_LOCALPATH}/terraform.tfstate" \
+        -token="${ACCURICS_API_KEY}" \
+        
+-var-file="${BUILD_REPOSITORY_LOCALPATH}/environments/${ENVIRONMENT}.tfvars" 
+\
+        -verbose
+  displayName: 'Accurics Plan'
+  env:
+    ACCURICS_API_KEY: $(ACCURICS_API_KEY)
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+  
+# We can publish artifacts from the pipeline in order to be able to review 
+them as part of fixing
+# up a pull request or similar
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.Repository.LocalPath)/accurics_report.html'
+    artifactType: 'pipeline'
+  
+# Apply the terraform if everything goes well with the accurics step 
+above.
+  
+- script: |
+    terraform apply -auto-approve plan.out
+  displayName: Terraform Apply
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
